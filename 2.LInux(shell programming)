@@ -1,0 +1,118 @@
+Topic 1
+==========================================================================================================
+What is Bash?
+Bash is an abbreviation of Bourne Again Shell. It is an improved version of the Legacy Shell that we used to see in older Linux/Unix Systems. 
+In this version,we have many features, like creating functions, controlling jobs in the foreground and background, creating aliases, customizing your 
+environment,putting color in your terminal, new shortcuts, auto-complete, and many other features.Shell is the interface on Linux which is used to 
+administer the system.
+#######################################################################################################################33
+Topic 2
+alisson@devops:~$ ls
+id_rsa.pub
+This command is used to show the files and the directories of Linux. It can be used with different parameters. For example,if I want to show the files 
+and directories in a detailed mode, I can pass the parameter –l:
+alisson@devops:~$ ls -l
+total 4
+-rw-rw-r-- 1 alisson alisson 398 Jan 31 20:18 id_rsa.pub
+alisson@devops:~$
+The last output shows us more information following that sequence:
+Permissions – Number of the Hard Links – User – Group – Size – Last Modification Date – Filename
+====================================================================================================================
+Topic 3
+If you want to see more about the metadata of a file, use the following command
+stat:
+alisson@devops:~$ stat id_rsa.pub
+File: id_rsa.pub
+Size: 398 Blocks: 8 IO Block: 4096 regular file
+Device: 802h/2050d Inode: 532800 Links: 1
+Access: (0664/-rw-rw-r--) Uid: (1000/ alisson) Gid: (1000/ alisson)
+Access: 2020-01-31 20:20:23.741638861 +0000
+Modify: 2020-01-31 20:18:39.467733742 +0000
+Change: 2020-01-31 20:18:39.467733742 +0000
+Birth: -
+This command will show you all the metadata about the file and in a detailed form.
+===============================================================================================
+Topic 4
+One very interesting parameter of the ls is the -a, which will show you all the files including the hidden ones. In Linux, all the hidden files starts 
+with a . (dot) in the beginning. For example:
+alisson@devops:~$ ls -la
+total 40
+drwxr-xr-x 5 alisson alisson 4096 Jan 31 20:20 .
+drwxr-xr-x 3 root root 4096 Jan 31 19:40 ..
+-rw------- 1 alisson alisson 113 Jan 31 20:20 .bash_history
+-rw-r--r-- 1 alisson alisson 220 Apr 4 2018 .bash_logout
+-rw-r--r-- 1 alisson alisson 3771 Apr 4 2018 .bashrc
+drwx------ 2 alisson alisson 4096 Jan 31 19:41 .cache
+drwx------ 3 alisson alisson 4096 Jan 31 19:41 .gnupg
+-rw-rw-r-- 1 alisson alisson 398 Jan 31 20:18 id_rsa.pub
+-rw-r--r-- 1 alisson alisson 807 Apr 4 2018 .profile
+drwxrwxr-x 2 alisson alisson 4096 Jan 31 20:20 .ssh
+We can see a lot of files now, like the .bashrc or .bash_history or the hidden directory .ssh, which we used in the first chapter to save our public key 
+to access the server without any password.
+============================================================================================================
+Topic 5
+If you want to see the content of a file, you can use the command cat:
+alisson@devops:~$ cat .bash_logout
+# ~/.bash_logout: executed by bash(1) when login shell exits.
+# when leaving the console clear the screen to increase privacy
+if ["$SHLVL" = 1]; then
+[-x /usr/bin/clear_console] && /usr/bin/clear_console -q
+fi
+Using the command cat, we were able to see the content of the .bash_logout file. This file has some importance, because if we want to execute a command
+before logging out of the server, we should put in this file.
+===========================================================================================================================
+Topic 6
+To display a message on the screen, use the command echo:
+alisson@devops:~$ echo Message on Terminal
+Message on Terminal
+This command is often used to create a file as well:
+alisson@devops:~$ echo Creating a file > message.txt
+alisson@devops:~$ ls
+id_rsa.pub message.txt
+alisson@devops:~$ cat message.txt
+=============================================================================================================================
+Topic 7
+Creating a file
+>
+We can use redirectors at Shell Script to send command outputs to write the files. There exist many redirectors, but the most used are ">" and ">>".
+If you use ">" after a command, the standard output of the command is redirected to a file that you need to specify. But, if you select an existing
+file, the redirector will overwrite it.
+>>
+If you use ">>" after a command, the standard output of the command is redirected to a file that you need to specify too. But, if you select an
+existing file, the redirector will append it and not overwrite it.
+===============================================================================================================================
+Topic 8
+To manage files, most commands use the same syntax. If you want to copy,move, or rename a file, you can use COMMAND <SOURCE FILE><DESTINATIONFILE>.
+Renaming a file:
+alisson@devops:~$ mv message.txt file.txt
+alisson@devops:~$ ls
+file.txt id_rsa.pub
+Copying a file:
+alisson@devops:~$ cp file.txt file2.txt
+alisson@devops:~$ ls
+file2.txt file.txt id_rsa.pub
+=================================================================================================================================================
+Topic 9
+In the first chapter, we edited a file and called authorized_keys. If we want to check this file again, we can access the directory using the command cd:
+alisson@devops:~$ cd .ssh/
+alisson@devops:~/.ssh$ ls
+authorized_keys
+And, we can check the file content again:
+alisson@devops:~/.ssh$ cat authorized_keys
+ssh-rsa
+AAAAB3NzaC1yc2EAAAADAQABAAABAQChi8HX26xv9Rk9gz47Qhb+Tu7MRqGIyP
+xnheIeEgFad/dlqG4w4pY7y5dtx5LNGE9C01varco5dZagqsHplI7M+5ECSvjAuS6b5r
+kYZwZiZruDXxckcQHFpr2yIz 3DOzKRTUc5Hg5JHF5aymiqyVfTsxL/aI/LDY8Ikh+
+INn3S9+b5bZtU+74tA6yuqt
+h5SCtNSWwMUlv7QL6ONHtQiviAjBe+ksDBBV6thWz2ZIJA/jApSIBJWK9AWmZwq
+2hFy9sOZArUDB2Kt6kl3rIZnHpqJ/GMUCxFhtggYamJ5J2H62
+77qLFqLZ/8tum9uc5l/lSWYKTDm2+E/prQfmFrxPf9 1511 mxti@avell
+================================================================================================================================
+If you need to know the directory you are working on, use the following command:
+alisson@devops:~/.ssh$ pwd
+/home/alisson/.ssh
+And if you want to go to the previous directory again, use the command cd using
+two dots (..):
+alisson@devops:~/.ssh$ cd ..
+alisson@devops:~$ pwd
+/home/alisson
