@@ -1,0 +1,84 @@
+Creating Containers(Topic 2)
+=========================================================================================================================================================
+The environment is ready. To ensure that your Docker is running fine, run the following command:
+=======================================================================================================================================================
+root@devops:~# systemctl status docker
+docker.service - Docker Application Container Engine
+Loaded: loaded (/lib/systemd/system/docker.service; enabled;
+vendor preset: enabled)
+Active: active (running) since Thu 2020-04-02 10:28:47 UTC; 1min
+7s ago
+Docs: https://docs.docker.com
+Main PID: 6464 (dockerd)
+Tasks: 9
+CGroup: /system.slice/docker.service
+└─6464 /usr/bin/dockerd -H fd:// --
+containerd=/run/containerd/containerd.sock
+Now, your Docker installation is active and running. 
+===================================================================================================================================================
+To create one container,you can just type the following command:     (Topic3)
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+root@devops:~# docker run -ti centos /bin/bash
+Unable to find image 'centos:latest' locally
+latest: Pulling from library/centos
+8a29a15cefae: Downloading
+[=================================================>]
+72.58MB/73.23MB
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                                                     (Topic4)
+The previous command means that we need to run a new container with a TTY (terminal), which is represented by the parameter -t, and an interactive,
+represented by the parameter -i. Thus, we can run the commands in the container terminal and see their outputs.
+=================================================================================================================================================
+When your container is created, you can see the following output:
+root@devops:~# docker run -ti centos /bin/bash
+Unable to find image 'centos:latest' locally
+latest: Pulling from library/centos
+8a29a15cefae: Pull complete
+Digest:
+sha256:fe8d824220415eed5477b63addf40fb06c3b049404242b31982106ac204f6700
+Status: Downloaded newer image for centos:latest
+=================================================================================================================================================
+[root@595b42fceebc /]#
+The last line is the important one:
+If you compare with our terminal in before running the command:
+root@devops:~# docker run -ti centos /bin/bas
+===================================================================================================================================================
+                                                                         (Topic 5)
+You can clearly see that the hostname is changed, which means now we are within the container and all the commands we will run, starting from now, will
+be running inside the container, and nothing will be installed in the VM environment. The hostname name given to the container 595b42fceebc is the
+container ID, which is used to manage your container. To exit from your container, type: exit or Ctrl + D:
+[root@595b42fceebc /]#
+exit
+root@devops:~#
+====================================================================================================================================================
+                                                                         (Topic 6)
+To see your current running containers, type the following command:
+root@devops:~#docker container ls
+CONTAIANER ID   IMAGE    COMMAND CREATED STATUS  PORTS NAMES
+
+We can see zero containers running. It happens because once you type exit or Ctrl + D from your container terminal, the container stops. 
+To see that, type the following command:
+root@devops:~#docker container ls -a
+CONTAIANER ID   IMAGE    COMMAND     CREATED STATUS   PORTS                  NAMES
+595b42fceebc    centos   "bin/bash"  9mins ago        Exited 2mins ago       sumit
+===================================================================================================================================================
+Important Points:--
+1.Now, you can see your container created. If you give a look, you can see that the value in the column CONTAINER ID is exactly the same as the container
+hostname
+[root@595b42fceebc /]#
+2.However, why does the Docker has this behavior? Why is it that when we exit from a container, the container stops? This happens because in the containers
+concept, one container is created for one specific purpose, different from the virtual machines. So, we do not need to concern about uptime or maintaining 
+a container. You can just delete it and create a new one. If you want to make changes into a container, you must modify the image, save it, delete the 
+current container, and start a new one with the new version of the image when we created it.
+3.In my case, I created a container based on a CentOS image, and I just ran the command /bin/bash, which was keeping my container alive. Once that
+command stops running, the container becomes dead. It also applies for the container configurations. If you want to change a redirect or any other
+parameters, you must create a new container with those new parameters, save it, and run a new container.
+======================================================================================================================================================
+                                                                    Topic 7
+Now, we will create a new container based in the CentOS image, and within this container, we will put a Python application that we learned in the last
+chapter:
+root@devops:~# docker run -ti --name python_app -p 5000:5000 centos /bin/bash
+[root@ce7f74b0304a /]#
+The creation now was clearly faster than the first one. This happens because the CentOS image is already in our local repository. Therefore, the Docker 
+does not need to download it again.
+=======================================================================================================================================================
