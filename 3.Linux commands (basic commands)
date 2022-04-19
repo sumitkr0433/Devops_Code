@@ -1,0 +1,197 @@
+Topic 1
+==============================================================================================================================================
+Structure of directories
+To see the basic structure of the directories on Linux, use the following command:
+alisson@devops:~$ ls /
+bin cdrom etc initrd.img lib lost+found mnt proc run snap swap.img tmp var vmlinuz.old
+boot dev home initrd.img.old lib64 media opt root sbin srv sys usr vmlinuz
+===========================================================================================================================================
+Topic 2
+we have some directories. I will explain just the most important of them:
+/: It is the root directory and everything that runs in your Linux system is below this directory.
+/etc: This directory stores all the configuration files on Linux.
+/var: This directory stores the log files and data of some services. For example, if you have a MySQL server installed in your system, you can
+find all the data stored inside /var/lib/mysql/data.
+/lib: Here you will find the libraries of your system. We do not have to often access this directory, but it is an important one to know. For example,
+the kernel modules are stored in /lib/modules.
+/bin: This directory stores the binaries. In other words, the programs are required for your Linux Words. For example, the command ls, it is found
+in this directory.
+/usr: Here you can find some binaries, like the /bin. But the binaries installed here are not required for your system works. For example,
+/usr/bin/at, this binary allows you to schedule a task to run in your system, but you can live without that.
+/boot: In this directory, you can find your kernel installed. My current version is: /boot/vmlinuz-4.15.0-76-generic.
+/proc: This is the current process running. One fact about this directory is it only exists when your Linux is turned on. If you have a dual boot and
+you try to mount your Linux partition, you will be able to see all the directories, except the /proc, because it is your RAM content.
+/opt: Usually, it becomes empty after your installation. But, when you compile a program, it is a good practice to put the binaries and the
+configuration files in this directory.
+/sbin: This is exactly like the /bin, but the binaries here require administration permissions. For example, if you want to format a partition,
+you will call the command /sbin/fdisk. You cannot run this command as a common user.
+/home: In this directory, you will find the home directory of all the common users. The only exception is the user root; its home directory can
+be found in /root.
+/mnt: Here, you can use to mount network shares; your pendrive, SD card,and another kind of external volumes.
+=============================================================================================================================================
+Topic 3
+Now that you already know the important directories, let's get inside of them and see the files that are important for our system to work.
+One important file is the /etc/passwd. This file is responsible to store all the Linux users, and we can give a look at its content using the cat command:
+alisson@devops:~$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+=============================================================================================================================================
+This was an example of the first 5 lines. Its structure follows the following sequence:
+User – password – user id – group id – comment – home folder - shell
+The data is separated by a colon (:). It is important to know that the Linux shell has many useful commands to work with these kinds of files.
+For example, we could use the command cut to see just the information we want:
+=============================================================================================================================================
+Topic 4
+alisson@devops:~$ cut -f 1,6,7 -d : /etc/passwd
+root:/root:/bin/bash
+daemon:/usr/sbin:/usr/sbin/nologin
+bin:/bin:/usr/sbin/nologin
+sys:/dev:/usr/sbin/nologin
+Thus, in the example, I printed just the columns 1, 6, 7 which correspond to the user, the home folder, and the shell.I am not posting the entire output 
+of the command because I want to save some space. But, you probably are running this on your own virtual machine. So, if you want to show just the first 
+3 lines of any file, you can use the command head. By default, this command shows the first 10 lines of a file, but we have the -n parameter, where we can
+define as many lines we want to see.
+For example:
+alisson@devops:~$ head -n 3 /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+===============================================================================================================================================
+Topic 5
+On Linux, it is also possible to concatenate the commands. If you want to see just the first 3 lines and only the columns 1, 6, 7 like we did with the 
+cut command, we can use the pipe (|). This statement has the function of getting the output of the last command and sending it to the next command in the 
+pipeline.
+Example:
+alisson@devops:~$ head -n3 /etc/passwd | cut -f 1,6,7 -d :
+root:/root:/bin/bash
+daemon:/usr/sbin:/usr/sbin/nologin
+bin:/bin:/usr/sbin/nologin
+============================================================================================================================================
+Topic 6
+Therefore, every time that you want to concatenate the commands, you must use the pipe (|). One interesting point is the second columns of the /etc/passwd 
+file.I wrote that it is the password, but we can only see an x, this character represents the encrypted password. The hash can be found in the file 
+/etc/shadow:
+alisson@devops:~$ sudo head -n3 /etc/shadow
+[sudo] password for alisson:
+root:*:18113:0:99999:7:::
+daemon:*:18113:0:99999:7:::
+bin:*:18113:0:99999:7:::
+===============================================================================================================================================
+Topic 7
+To see the content of this file, you need to run the command sudo before the command head. The sudo command means the substitute users do. In a simple
+way, we are running the command head as we were another user. If you do not specify the user, by default, the user is root. The password is the same as 
+we set in the installation. If you set the same password as me, it’s devops.
+To see your user's password, we can use the command grep. This command will find the line which corresponds with our criteria of the search.
+Example:
+alisson@devops:~$ sudo grep alisson /etc/shadow
+alisson:$6$aeR.OxEqoVMnyUuq$eYxtbG6V.156mtlsK9QBZcVOjQZBm7NlcKFn5x1y
+xF4mffuLYd6Wmz2R9V2iKZvuC7fgp96H7.jlQW/o7OenF/:18292:0:99999:7:::
+=============================================================================================================================================
+Now you can clearly see the password hash in the second column. Of course, we cannot decrypt it, but if you want to take a Linux certification, you will 
+need to record this file and the structures. However, we can also remove a user's password. You can just edit this file and delete the hash. This way, 
+the user will not have a password and he can set a new one in the future.
+=======================================================================================================================================
+Topic 8
+Regarding the users, we also have one file on Linux to manage the groups. This file is located in /etc/group:
+alisson@devops:~$ head -n 3 /etc/group
+root:x:0:
+daemon:x:1:
+bin:x:2:
+This file follows the following sequence:
+Group name | password | group id | users
+So, the users added into a group will appear in the last column of each line. As I explained earlier, we can use the command grep to find a group and see 
+which users were added into it:
+============================================================================================================
+Topic 9
+alisson@devops:~$ grep sudo /etc/group
+sudo:x:27:alisson
+It shows us one interesting thing; the command sudo only allows the users who belong to the sudo group to use the command. Another important file is the
+/etc/fstab. This file is responsible to mount our volumes during the boot. Let's give it a look:
+#########################################################################################################################
+alisson@devops:~$ cat /etc/fstab
+UUID=75fbe5e6-26ff-4522-abc4-0d8a3ac69c5b / ext4 defaults 0 0
+/swap.img none swap sw 0 0
+When you work with Linux, it is really important for you to know the structure of the files. So, this file is organized in the following sequence:
+Partition – folder – filesystem type – mounting options – backup enable – disk check sequence
+Nowadays, this command lets you see the first column with a uuid, which represents a partition. If you want to see where it binds, run the following
+command:
+alisson@devops:~$ blkid
+/dev/sda2: UUID="75fbe5e6-26ff-4522-abc4-0d8a3ac69c5b" TYPE="ext4"
+PARTUUID="7177f53d-2db2-49cb-93a9-21d763cac088"
+If you check, it is exactly the same in the /etc/fstab. If you want to change, you can just replace the uuid in the file to /dev/sda2. It will work in the
+same way. The machine's hostname is stored in the /etc/hostname:
+alisson@devops:~$ cat /etc/hostname
+###############################################################################################################################
+Topic 10
+If you want to change the hostname, you can just edit this file. We also have the /etc/hosts file that you can map an IP address to a name, as we did in 
+the DNS:
+alisson@devops:~$ cat /etc/hosts
+127.0.0.1 localhost
+127.0.1.1 devops
+# The following lines are desirable for IPv6 capable hosts
+::1 ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+It is very useful when you are developing a web system and you don't want to
+type the IP address in the browser every time a really important file is
+/etc/sudores:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+alisson@devops:~$ sudo cat /etc/sudoers
+[sudo] password for alisson:
+#
+# This file MUST be edited with the 'visudo' command as root.
+#
+# Please consider adding local content in /etc/sudoers.d/ instead
+of
+# directly modifying this file.
+#
+# See the man page for details on how to write a sudoers file.
+#
+Defaults env_reset
+Defaults mail_badpass
+Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+# Host alias specification
+# User alias specification
+# Cmnd alias specification
+# User privilege specification
+root ALL=(ALL:ALL) ALL
+# Members of the admin group may gain root privileges
+%admin ALL=(ALL) ALL
+# Allow members of group sudo to execute any command
+%sudo ALL=(ALL:ALL) ALL
+# See sudoers(5) for more information on "#include" directives:
+#includedir /etc/sudoers.d
+This file is responsible to manage who can use the sudo command. I explained
+earlier, the only users in the group sudo can run the command. But, how does the
+command know which group it needs to use? Because of the following line:
+# Allow members of group sudo to execute any command
+%sudo ALL=(ALL:ALL) ALL
+You can put more groups in this file or you can put the users directly, like the
+following line:
+# User privilege specification
+root ALL=(ALL:ALL) ALL
+One thing that is nice to work with Linux is since all the documentation comes
+inside the files, like we saw in the /etc/sudoers, the comments explain how and
+where you have to edit the file. We also have the command man for that:
+alisson@devops:~$ man sudo
+SUDO(8)
+BSD System Manager's Manual
+SUDO(8)
+NAME
+sudo, sudoedit — execute a command as another user
+SYNOPSIS
+sudo -h | -K | -k | -V
+sudo -v [-AknS] [-a type] [-g group] [-h host] [-p prompt] [-u
+user]
+sudo -l [-AknS] [-a type] [-g group] [-h host] [-p prompt] [-U
+user] [-u user] [command]
+sudo [-AbEHnPS] [-a type] [-C num] [-c class] [-g group] [-h host]
+[-p prompt] [-r role] [-t type] [-T timeout] [-u user] [VAR=value]
+[-i | -s] [command]
+sudoedit [-AknS] [-a type] [-C num] [-c class] [-g group] [-h
+host] [-p prompt] [-T timeout] [-u user] file …
