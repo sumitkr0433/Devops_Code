@@ -1,0 +1,54 @@
+##how to install Docker, how to work using it,
+##create new containers, images, networks, and deploy the image inside a server.
+===========================================================================================
+Topic1:--Structure
+In this chapter, we will discuss the following topics:
+Introduction to Docker
+Installing Docker and creating containers
+Creating images using Dockerfile
+Publishing images and deploying it
+=================================================================================================
+Objectives
+After studying this unit, you should be able to:
+Understand what is Docker and how it works
+Setup a Docker environment
+Create containers and images
+Version images and deploying
+=====================================================================================================
+Introduction to Docker
+Docker is a tool set to create containers and version it. For those who have more experience with Linux, they probably already know what a container is 
+by using the command chroot on Linux. In simple words, a container is a directory in your file system that allows you to install another Linux operating 
+system in it.As the command says chroot (change root), so the new root directory /, will be the new one that you set. However, an entire operating system 
+needs so much more than just the files. Then, for the networking part, the Docker uses iptables under the hood. 
+==============================================================================================================
+To manage some redirects via NAT rules, I will show you the amount of stuff that Docker manages for you by running some simple commands in the following 
+paragraphs.
+###########################################################################################################################################
+##########################################################################################################################################
+Installation(1st Section)
+=========================================================================================================================================
+Firstly, we need to install Docker in our environment. In the official documentation, you will find all the steps and the detailed instructions. Here, 
+we have a summary of everything:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+sudo su -
+apt clean
+apt-get update
+apt-get remove docker docker-engine docker.io containerd runc -y
+==================================================================================================================================================
+The preceding commands will remove any previous installation of Docker, if you had one in your machine:
+apt-get install apt-transport-https ca-certificates curl gnupgagent software-properties-common -y
+=================================================================================================================================================
+Now, we are just installing some dependencies that are required for your Docker installation, like the apt-transport-https, which is a requirement to 
+download packages from the https repositories:
+===================================================================================================================================================
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+================================================================================================================
+The following command will add GNU Privacy Guard key to ensure the authenticity of the Docker repository:
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+==============================================================================================================================================
+We are using Ubuntu. So, the preceding command is specifically for Ubuntu environments:
+apt-get update -y
+apt-get install docker-ce docker-ce-cli containerd.io -y
+================================================================================================================================================
+To conclude, the previous command were to update your local repositories list
+and install the Docker Community Edition.
