@@ -1,0 +1,123 @@
+######Topic 1
+1.Commands:-->ip a
+The preceding command will show all the network interfaces you have and their IP address, like the following screenshot:
+We just have 2 IP addresses and 2 interfaces:
+Interface: lo
+IP Address: 127.0.0.1
+This is the local IP address. It is used to make the TCP/IP connection without
+getting outside of the machine:
+Interface: enp0s
+IP Address: 10.0.2.15
+=======================================================================================================================
+######Topic 2
+Virtual machine Configuration
+This is a NAT interface. We need this interface just to make the internet connection. But, we cannot access the machine from outside using this
+configuration. It is used just for the installation purposes. We could have changed that before. However, I wanted to show you how to change that
+configuration and why we need to do it.
+=============================================================================================================================
+#######Topic 3
+To change this configuration, go to the main screen of the VirtualBox. Now,click on the virtual machine, and then, click on Settings | Network. In this 
+part,Attached, you will see the value Nat. Change it to the Bridge Network, and in the option Name: select the network interface that you have the internet
+access to.In my case, it is configured like the following screenshot:
+After saving the configuration, go back to your VM and run the following
+command again:
+ip a
+You will see a new IP address. In my case,192.168.178.62 was attached:
+==================================================================================================================================
+###Topic 4
+Accessing via SSH
+We have a connection from the outside now. So, how can we connect to that machine using the SSH? In the past, it was common to use tools like Putty to
+SSH the servers from Windows machines, but in the new versions of Windows,we have PowerShell, which is installed by default and we can use it to access 
+our VM.
+Open the PowerShell if you're using Windows or Terminal in Linux/MacOS, and run the following command:
+ssh alisson@192.168.178.62
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+####Topic 5
+The command follows the structure USER@HOSTNAME. If you do not have a hostname configured, you can use the IP address. After that, press Enter. It will
+show you the following message:
+The authenticity of host '192.168.178.62 (192.168.178.62)' can't be
+established.
+ECDSA key fingerprint is
+SHA256:GX474/IAL/VeIoiV/r6WoPZHRg3HfFTS3tfvigA9jKM.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.178.62' (ECDSA) to the list of known hosts.
+===================================================================================================================================================
+#####Topic 6
+It happens because this is the first time you are connecting to that server. You can just type Yes to make sure that you want to connect to it and then,
+the SSH will ask for your password:
+alisson@192.168.178.62's password:
+Type the password defined in your installation. In my case, it was DevOps, and you will be able to access the Linux shell again:
+Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-76-generic
+x86_64)Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-76-generic
+x86_64)
+* Documentation: https://help.ubuntu.com
+* Management: https://landscape.canonical.com
+* Support: https://ubuntu.com/advantage
+System information as of Fri Jan 31 20:04:07 UTC 2020
+System load: 0.0 Processes: 88
+Usage of /: 39.0% of 9.78GB Users logged in: 1
+Memory usage: 15% IP address for
+enp0s3: 192.168.178.62
+Swap usage: 0%
+61 packages can be updated.
+0 updates are security updates.
+Last login: Fri Jan 31 19:41:36 2020
+To run a command as administrator (user "root"), use "sudo
+<command>".
+See "man sudo_root" for details.
+alisson@devops:~$
+=========================================================================================================================
+#####Topic 7
+There is a lot of theory and concepts about the SSH connections which are encrypted, and we have the known_hosts files. It is important to know if 
+you want to become a Linux expert, but not that important for us now.We know that using a password to access the server is not the best practice,
+because they are a lot reliable and are easily exposed. So, we can create a key pair to secure our access. You can exit from your shell by typing the 
+following command:
+alisson@devops:~$ logout
+Connection to 192.168.178.62 closed.
+Or press Ctrl + D. In your PowerShell console, type the following command
+=============================================================================================================================
+#########Topic 7
+ssh-keygen
+And press Enter for all the options. This command will generate two files for you:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+id_rsa: id_rsa is your private key. This should be in your PC, and only you can have this file.
+id_rsa.pub: id_rsa.pub is the public key. You will copy this file to every Linux server you want to access without a password.
+To copy your public key to our server, run the following command:
+scp .\.ssh\id_rsa.pub
+alisson@192.168.178.62:/home/alisson/id_rsa.pub
+alisson@192.168.178.62's password:
+id_rsa.pub
+100% 398 397.4KB/s 00:00
+The file was copied, so access the server again:
+ssh alisson@192.168.178.62
+alisson@192.168.178.62's password:
+============================================================================================================================
+Create the .ssh directory and create the authorized_keys file. This file will store all the public keys to access the server using the user 
+alisson:
+mkdir .ssh
+cat id_rsa.pub >> .ssh/authorized_keys
+logout
+====================================================================================================================================
+Now, if you try to access the server again, no password will be asked, like the
+following example:
+ssh alisson@192.168.178.62
+Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-76-generic
+x86_64)Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-76-generic
+x86_64)
+* Documentation: https://help.ubuntu.com
+* Management: https://landscape.canonical.com
+* Support: https://ubuntu.com/advantage
+System information as of Fri Jan 31 20:24:51 UTC 2020
+System load: 0.2 Processes: 88
+Usage of /: 39.0% of 9.78GB Users logged in: 1
+Memory usage: 15% IP address for
+enp0s3: 192.168.178.62
+Swap usage: 0%
+61 packages can be updated.
+0 updates are security updates.
+Last login: Fri Jan 31 20:20:28 2020 from 192.168.178.60
+To run a command as administrator (user "root"), use "sudo
+<command>".
+See "man sudo_root" for details.
+alisson@devops:~$
+Mission complete! Now we are ready to learn more about the Bash, directories,files, and many more.
