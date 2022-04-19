@@ -1,0 +1,192 @@
+Topic 1
+Setting Up a Service.
+========================================================================
+Debian based distributions, like Ubuntu, have the APT (Advanced Package Tool). It connects to a central repository like this:
+http://de.archive.ubuntu.com/ubuntu. It is just an Apache web server, and in it, are stored several packages which we can choose and install.
+RedHat based distributions, like CentOS, have YUM (Yellow Dog Update Manager), which will soon be replaced by the DNF (Dandified Yum), the new
+substitute of YUM. It also uses a central repository like https://dl.fedoraproject.org/pub/epel/7/x86_64/, and also stores several
+=======================================================================================
+Topic2
+APT
+If you run just the command apt without any parameter, you will see the following output:
+alisson@devops:~$ apt
+apt 1.6.11 (amd64)
+Usage: apt [options] command
+apt is a commandline package manager and provides commands for searching and managing as well as querying information about
+packages.It provides the same functionality as the specialized APT tools,like apt-get and apt-cache, but enables options more suitable for interactive use 
+by default.
+Most used commands:
+list - list packages based on package names
+search - search in package descriptions
+show - show package details
+install - install packages
+remove - remove packages
+autoremove - Remove automatically all unused packages
+update - update list of available packages
+upgrade - upgrade the system by installing/upgrading packages
+full-upgrade - upgrade the system by removing/installing/upgrading
+packages
+edit-sources - edit the source information file
+See apt(8) for more information about the available commands.
+Configuration options and syntax is detailed in apt.conf(5).
+Information about how to configure sources can be found in sources.list(5).
+Package and version choices can be expressed via
+apt_preferences(5).
+Security details are available in apt-secure(8).
+This APT has Super Cow Powers.
+============================================================================================================
+Topic 3
+Therefore, the options are self-explained. Let's use them in practice. One interesting thing is the command top:
+top - 18:19:11 up 2 days, 2:34, 1 user, load average: 0.04, 0.03,
+0.00
+Tasks: 92 total, 1 running, 50 sleeping, 0 stopped, 0 zombie
+%Cpu(s): 0.0 us, 0.0 sy, 0.0 ni,100.0 id, 0.0 wa, 0.0 hi, 0.0 si,
+0.0 st
+KiB Mem : 1008816 total, 133020 free, 126512 used, 749284
+buff/cache
+KiB Swap: 2017276 total, 2016752 free, 524 used. 716548 avail Mem
+PID USER PR NI VIRT RES SHR S %CPU %MEM TIME+ COMMAND
+28427 alisson 20 0 107988 3460 2448 S 0.3 0.3 0:00.14 sshd
+28462 alisson 20 0 42788 3940 3344 R 0.3 0.4 0:00.25 top
+1 root 20 0 77992 9104 6680 S 0.0 0.9 0:02.58 systemd
+2 root 20 0 0 0 0 S 0.0 0.0 0:00.00 kthreadd
+4 root 0 -20 0 0 0 I 0.0 0.0 0:00.00 kworker/0:0H
+6 root 0 -20 0 0 0 I 0.0 0.0 0:00.00 mm_percpu_wq
+7 root 20 0 0 0 0 S 0.0 0.0 0:00.55 ksoftirqd/0
+8 root 20 0 0 0 0 I 0.0 0.0 0:19.94 rcu_sched
+===========================================================================================
+Topic 4
+To exit from the top, press q. This command basically shows the current state of
+your machine, the state of memory, CPU, processes running, etc. There is
+another version of top which is called htop. It does exactly the same thing.
+However, it has a better interface, and therefore, before we install that version,
+run the following command:
+alisson@devops:~$ sudo su -
+[sudo] password for alisson:
+root@devops:~#
+The previous command changes your current user to the user root. Until now, we were running the command sudo before every command which needs more
+permission. Now, we need not type sudo before the command every time because we are already the administrator of this server. Or, you can say that we
+are the root user.Sometimes, when we create a server based on an image. The local cache of APT is completely outdated. So, we need to clean it and update 
+using the following
+=============================================================================================================================================
+commands:
+root@devops:~# apt clean
+root@devops:~# apt update
+Hit:1 http://de.archive.ubuntu.com/ubuntu bionic InRelease
+Hit:2 http://de.archive.ubuntu.com/ubuntu bionic-updates InRelease
+Hit:3 http://de.archive.ubuntu.com/ubuntu bionic-backports
+InRelease
+Hit:4 http://de.archive.ubuntu.com/ubuntu bionic-security InRelease
+Reading package lists… Done
+Building dependency tree
+Reading state information… Done
+65 packages can be upgraded. Run 'apt list --upgradable' to see
+them.
+===============================================================================================
+root@devops:~#
+Now, you have the local cache updated. We can try to find the htop and see if it is available to install:
+root@devops:~# apt search htop
+Sorting… Done
+Full Text Search… Done
+aha/bionic 0.4.10.6-4 amd64
+ANSI color to HTML converter
+htop/bionic,now 2.1.0-3 amd64 [installed,automatic]
+interactive processes viewer
+libauthen-oath-perl/bionic 2.0.1-1 all
+Perl module for OATH One Time Passwords
+pftools/bionic 3+dfsg-2build1 amd64
+build and search protein and DNA generalized profiles
+===================================================================================================
+Analyzing the previous output, we can say that htop is available. So, to install
+the package, we use the following command:
+root@devops:~# apt install htop -y
+Reading package lists… Done
+Building dependency tree
+Reading state information… Done
+htop is already the newest version (2.1.0-3).
+htop set to manually installed.
+0 upgraded, 0 newly installed, 0 to remove and 65 not upgraded.
+root@devops:~#
+The package is installed now. So, run the following command:
+CPU[
+0.0%] Tasks: 29, 28 thr; 1 running
+Mem[||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||128M/985M]
+Load average: 0.07 0.02 0.00
+Swp[| 524K/1.92G] Uptime: 2 days, 02:45:09
+PID USER PRI NI VIRT RES SHR S CPU% MEM% TIME+ Command 28771 root
+20 0 32468 4868 3764 R 0.0 0.5 0:00.02 htop 1 root 20 0 77992 9104
+6680 S 0.0 0.9 0:02.58 /sbin/init maybe-ubiquity
+394 root 19 -1 100M 17652 16796 S 0.0 1.7 0:00.36
+/lib/systemd/systemd-journald
+420 root 20 0 103M 1852 1664 S 0.0 0.2 0:00.00 /sbin/lvmetad -f
+421 root 20 0 45836 4476 2888 S 0.0 0.4 0:00.87
+/lib/systemd/systemd-udevd
+496 systemd-t 20 0 138M 3256 2744 S 0.0 0.3 0:00.00
+/lib/systemd/systemd-timesyncd
+491 systemd-t 20 0 138M 3256 2744 S 0.0 0.3 0:00.20
+/lib/systemd/systemd-timesyncd
+672 systemd-n 20 0 80048 5076 4484 S 0.0 0.5 0:00.19
+/lib/systemd/systemd-networkd
+696 systemd-r 20 0 70636 4916 4356 S 0.0 0.5 0:00.19
+/lib/systemd/systemd-resolved
+In this simple output, we are able to see some improvements. For example, we now have a bar to indicate the amount of memory used in the server. It is a 
+good tool to analyze the current state of your server, but, it is not used much in the production system because it consumes more memory than the 
+traditional top.So, let’s remove this package using the following command:
+=================================================================================================================================================
+root@devops:~# apt remove htop
+Reading package lists… Done
+Building dependency tree
+Reading state information… Done
+The following packages will be REMOVED:
+htop ubuntu-server
+0 upgraded, 0 newly installed, 2 to remove and 64 not upgraded.
+After this operation, 269 kB disk space will be freed.
+Do you want to continue? [Y/n] y
+(Reading database … 102467 files and directories currently
+installed.)
+Removing ubuntu-server (1.417.3) …
+Removing htop (2.1.0-3) …
+Processing triggers for mime-support (3.60ubuntu1) …
+Processing triggers for man-db (2.8.3-2ubuntu0.1) …
+These are all the commands you will probably use in your daily work while
+installing the packages on Linux. Beside the commands, we also have some
+important files which are required to install some packages that may not be
+available in the official repositories.
+The first important file is /etc/apt/sources.list:
+root@devops:~# cat /etc/apt/sources.list
+# See http://help.ubuntu.com/community/UpgradeNotes for how to
+upgrade to
+# newer versions of the distribution.
+deb http://de.archive.ubuntu.com/ubuntu bionic main restricted
+deb http://de.archive.ubuntu.com/ubuntu bionic-updates main
+restricted
+Above-mentioned is an example of the first few entries from the sources.list. These are the lines representing the remote repositories where the packages 
+are found. If you want to add a new repository, you can just find the respective line and add at the end of this file, for example:
+deb http://ppa.launchpad.net/canonical-kernel-team/unstable/ubuntu bionic main
+In the beginning of the URL, you can see that it starts with PPA (Personal Packages Archines).These are the useful repositories that are not included in
+the distribution by default, but you may find some packages which you want to use.
+Another important directory is: /var/cache/apt/. In the beginning, I explained that the APT stores the cache inside the Linux, and if it is too old, we 
+need to clean and update it. This folder also downloads the packages installed in our system, for example:
+=============================================================================================================================================
+root@devops:~# apt install htop --download-only
+Reading package lists… Done
+Building dependency tree
+Reading state information… Done
+The following NEW packages will be installed:
+htop
+0 upgraded, 1 newly installed, 0 to remove and 64 not upgraded.
+Need to get 80.0 kB of archives.
+After this operation, 221 kB of additional disk space will be used.
+Get:1 http://de.archive.ubuntu.com/ubuntu bionic/main amd64 htop
+amd64 2.1.0-3 [80.0 kB]
+Fetched 80.0 kB in 0s (451 kB/s)
+Download complete and in download only mode
+I ran the APT installation just to download the package using the option download-only, and if we check the directory:
+root@devops:~# ls /var/cache/apt/archives/
+htop_2.1.0-3_amd64.deb lock partial
+===========================================================================================================================================
+You can see the package there. Now, if you run the following clean command:
+root@devops:~# apt clean
+root@devops:~# ls /var/cache/apt/archives/
+lock partial
+The package is not there anymore.
