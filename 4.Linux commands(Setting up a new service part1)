@@ -190,3 +190,5 @@ root@devops:~# apt clean
 root@devops:~# ls /var/cache/apt/archives/
 lock partial
 The package is not there anymore.
+Page No-->93
+=================================================================================================================================================
