@@ -1,0 +1,24 @@
+$ git --version
+git version 2.26.2.windows.1
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+$ git
+usage: git [--version] [--help] [-C <path>] [-c <name>=<value>]
+[--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
+[-p | --paginate | -P | --no-pager] [--no-replace-objects] [--bare]
+[--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
+<command> [<args>]
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+git help -a' and 'git help -g' list available subcommands
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+lenovo@DESKTOP-ECE8V3R MINGW64 ~
+$ cd d:
+lenovo@DESKTOP-ECE8V3R MINGW64 /d
+$ mkdir gitprojects
+lenovo@DESKTOP-ECE8V3R MINGW64 /d
+$ cd gitprojects
+lenovo@DESKTOP-ECE8V3R MINGW64 /d/gitprojects
+$ mkdir project1
+lenovo@DESKTOP-ECE8V3R MINGW64 /d/gitprojects
+$ cd project1
+lenovo@DESKTOP-ECE8V3R MINGW64 /d/gitprojects/project1
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
