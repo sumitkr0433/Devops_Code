@@ -3,8 +3,8 @@ Topic 1
 Structure of directories
 To see the basic structure of the directories on Linux, use the following command:
 alisson@devops:~$ ls /
-bin cdrom etc initrd.img lib lost+found mnt proc run snap swap.img tmp var vmlinuz.old
-boot dev home initrd.img.old lib64 media opt root sbin srv sys usr vmlinuz
+bin cdrom etc initrd.img lib lost+found mnt proc run snap swap.img tmp var vmlinuz.old boot dev home initrd.img.old lib64 media opt root sbin srv sys usr 
+vmlinuz
 ===========================================================================================================================================
 Topic 2
 we have some directories. I will explain just the most important of them:
@@ -25,8 +25,8 @@ you try to mount your Linux partition, you will be able to see all the directori
 configuration files in this directory.
 /sbin: This is exactly like the /bin, but the binaries here require administration permissions. For example, if you want to format a partition,
 you will call the command /sbin/fdisk. You cannot run this command as a common user.
-/home: In this directory, you will find the home directory of all the common users. The only exception is the user root; its home directory can
-be found in /root.
+/home: In this directory, you will find the home directory of all the common users. The only exception is the user root; its home directory can be found 
+in /root.
 /mnt: Here, you can use to mount network shares; your pendrive, SD card,and another kind of external volumes.
 =============================================================================================================================================
 Topic 3
@@ -84,6 +84,7 @@ Topic 7
 To see the content of this file, you need to run the command sudo before the command head. The sudo command means the substitute users do. In a simple
 way, we are running the command head as we were another user. If you do not specify the user, by default, the user is root. The password is the same as 
 we set in the installation. If you set the same password as me, it’s devops.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 To see your user's password, we can use the command grep. This command will find the line which corresponds with our criteria of the search.
 Example:
 alisson@devops:~$ sudo grep alisson /etc/shadow
@@ -93,6 +94,7 @@ xF4mffuLYd6Wmz2R9V2iKZvuC7fgp96H7.jlQW/o7OenF/:18292:0:99999:7:::
 Now you can clearly see the password hash in the second column. Of course, we cannot decrypt it, but if you want to take a Linux certification, you will 
 need to record this file and the structures. However, we can also remove a user's password. You can just edit this file and delete the hash. This way, 
 the user will not have a password and he can set a new one in the future.
+page no-78
 =======================================================================================================================================
 Topic 8
 Regarding the users, we also have one file on Linux to manage the groups. This file is located in /etc/group:
@@ -140,7 +142,9 @@ ff02::2 ip6-allrouters
 It is very useful when you are developing a web system and you don't want to
 type the IP address in the browser every time a really important file is
 /etc/sudores:
+Page No--70
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Topic 11
 alisson@devops:~$ sudo cat /etc/sudoers
 [sudo] password for alisson:
 #
@@ -175,9 +179,11 @@ You can put more groups in this file or you can put the users directly, like the
 following line:
 # User privilege specification
 root ALL=(ALL:ALL) ALL
-One thing that is nice to work with Linux is since all the documentation comes
-inside the files, like we saw in the /etc/sudoers, the comments explain how and
-where you have to edit the file. We also have the command man for that:
+=======================================================================================================================================
+Topic 12
+One thing that is nice to work with Linux is since all the documentation comes inside the files, like we saw in the /etc/sudoers, the comments explain 
+how and where you have to edit the file. We also have the command man for that:
+=============================================================================================================================================
 alisson@devops:~$ man sudo
 SUDO(8)
 BSD System Manager's Manual
@@ -195,3 +201,208 @@ sudo [-AbEHnPS] [-a type] [-C num] [-c class] [-g group] [-h host]
 [-i | -s] [command]
 sudoedit [-AknS] [-a type] [-C num] [-c class] [-g group] [-h
 host] [-p prompt] [-T timeout] [-u user] file …
+==============================================================================================================================================
+Topic 13
+####crontab
+This is just the first few lines of the file. To quit the man, press q . The file
+/etc/crontab :
+alisson@devops:~$ cat /etc/crontab
+# /etc/crontab: system-wide crontab#
+#
+#
+#
+Unlike any other crontab you don't have to run the 'crontab'command to install the new version when you edit this file and files in /etc/cron.d. These 
+files also have username fields,that none of the other crontabs do.
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+# m h dom mon dow user command
+17 * * * * root cd / && run-parts --report /etc/cron.hourly
+25 6 * * * root test -x /usr/sbin/anacron || (cd / && run-parts --
+report /etc/cron.daily)
+47 6 * * 7 root test -x /usr/sbin/anacron || (cd / && run-parts --
+report /etc/cron.weekly)
+52 6 1 * * root test -x /usr/sbin/anacron || (cd / && run-parts --
+report /etc/cron.monthly)
+#
+This is responsible to manage the scheduled tasks. It follows the following structure:
+Minute – hour – day of the month – month – day of the week – user -command
+So, if you want to schedule the tasks to run every Friday at 07 line like the following:
+00 19 * * 5 root  bash /bin/backup.sh
+==============================================================================================================================================
+Topic 14
+============================================================================================================================================
+Therefore, every Friday at 7 pm, the user root will run the command backup.sh. This is how we must read a line in the crontab file. This is the 
+main file, but each user has their own crontabs , and they can be found in the following path:
+alisson@devops:~$ sudo ls /var/spool/cron/crontabs/ -la
+[sudo] password for alisson:
+total 8
+drwx-wx--T 2 root crontab 4096 Nov 16 2017 .
+drwxr-xr-x 5 root root
+4096 Aug 5 2019 ..
+=============================================================================================================================================
+We do not have any file inside this directory, because we never created any schedule. But, we can edit the users' crontab for you to see the creation of 
+the file. Type the following command in your terminal:
+alisson@devops:~$ crontab -e
+no crontab for alisson - using an empty one
+Select an editor. To change later, run 'select-editor'.1.
+2.
+3.
+4.
+/bin/nano <---- easiest
+/usr/bin/vim.basic
+/usr/bin/vim.tiny
+/bin/ed
+Choose 1-4 [1]: 2
+crontab: installing new crontab
+You can choose option 2, as I did. It will set the VIM as the default text editor
+for your crontab . Wait for the VIM to open and close by pressing Esc, and use
+the following command:
+:wq!
+==============================================================================================================================
+I will explain more about VIM in the next section. Now that you have saved your user crontab , you can check the folder again:
+alisson@devops:~$ sudo ls /var/spool/cron/crontabs/ -la
+total 12
+drwx-wx--T 2 root crontab 4096 Feb 17 20:54 .
+drwxr-xr-x 5 root root 4096 Aug 5 2019 ..
+-rw------- 1 alisson crontab 1089 Feb 17 20:54 alisson
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can see that a file with the same user's name was created. So, every user will have a file in this folder since they created a crontab using the 
+command crontab -e . For Linux systems, it is a requirement to have an SSH connection and the configuration file for this is: /etc/ssh/sshd_config :
+alisson@devops:~$ cat /etc/ssh/sshd_config
+# $OpenBSD: sshd_config,v 1.101 2017/03/14 07:19:07 djm Exp $
+# This is the sshd server system-wide configuration file. See
+# sshd_config(5) for more information.
+# This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin
+# The strategy used for options in the default sshd_config shipped
+with
+# OpenSSH is to specify options with their default value where
+# possible, but leave them commented. Uncommented options override
+the
+# default value.
+#Port 22
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+Formerly, we have a short part of the file, in which you are able to change theport, and define which IP addresses will listen for the connections:
+alisson@devops:~$ grep Root /etc/ssh/sshd_config
+#PermitRootLogin prohibit-password
+# the setting of "PermitRootLogin without-password".
+One important configuration in the preceding file, PermitRootLogin , is in some cases, we are able to login in the server using the root user directly.
+But, it is not a good practice. However, it is not uncommon to see in an on-premises environment.In the cloud environment, it is never allowed, because 
+everyone in the world can try to access with the root user.
+Another important configuration is the following one:
+==================================================================================================================================================
+alisson@devops:~$ grep PasswordAuthentication /etc/ssh/sshd_config
+#PasswordAuthentication yes
+# PasswordAuthentication. Depending on your PAM configuration,
+# PAM authentication, then enable this but set
+PasswordAuthentication
+PasswordAuthentication yes
+If you are working with any Cloud provider like Amazon, Azure, or GCP, this configuration is disabled by default, for security reasons. We have added 
+our SSH key in the server in the first chapter. So, if you want, you can edit this file and change the option for no .This is just the first few lines of 
+the file. To quit the man, press q . The file /etc/crontab :
+===================================================================================================================================================
+alisson@devops:~$ cat /etc/crontab
+# /etc/crontab: system-wide crontab#
+#
+#
+#
+Unlike any other crontab you don't have to run the 'crontab'
+command to install the new version when you edit this file
+and files in /etc/cron.d. These files also have username fields,
+that none of the other crontabs do.
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+# m h dom mon dow user command
+17 * * * * root cd / && run-parts --report /etc/cron.hourly
+25 6 * * * root test -x /usr/sbin/anacron || (cd / && run-parts --
+report /etc/cron.daily)
+47 6 * * 7 root test -x /usr/sbin/anacron || (cd / && run-parts --
+report /etc/cron.weekly)
+52 6 1 * * root test -x /usr/sbin/anacron || (cd / && run-parts --
+report /etc/cron.monthly)
+#
+This is responsible to manage the scheduled tasks. It follows the following
+structure:
+Minute – hour – day of the month – month – day of the week – user -
+command
+So, if you want to schedule the tasks to run every Friday at 07
+line like the following:
+00 19
+* * 5
+root
+pm ,
+you can add a
+bash /bin/backup.sh
+Therefore, every Friday at 7 pm, the user root will run the command
+backup.sh. This is how we must read a line in the crontab file. This is the main
+file, but each user has their own crontabs , and they can be found in the
+following path:
+alisson@devops:~$ sudo ls /var/spool/cron/crontabs/ -la
+[sudo] password for alisson:
+total 8
+drwx-wx--T 2 root crontab 4096 Nov 16 2017 .
+drwxr-xr-x 5 root root
+4096 Aug 5 2019 ..
+===================================================================================================================================================
+We do not have any file inside this directory, because we never created any schedule. But, we can edit the users' crontab for you to see the creation of 
+the file. Type the following command in your terminal:
+alisson@devops:~$ crontab -e
+no crontab for alisson - using an empty one
+Select an editor. To change later, run 'select-editor'.1.
+1./bin/nano <---- easiest
+2./usr/bin/vim.basic
+3./usr/bin/vim.tiny
+4./bin/ed
+Choose 1-4 [1]: 2
+crontab: installing new crontab
+You can choose option 2, as I did. It will set the VIM as the default text editor for your crontab . Wait for the VIM to open and close by pressing Esc, 
+and use the following command:
+:wq!
+I will explain more about VIM in the next section. Now that you have saved your user crontab , you can check the folder again:
+================================================================================================================================================
+alisson@devops:~$ sudo ls /var/spool/cron/crontabs/ -la
+total 12
+drwx-wx--T 2 root crontab 4096 Feb 17 20:54 .
+drwxr-xr-x 5 root root 4096 Aug 5 2019 ..
+-rw------- 1 alisson crontab 1089 Feb 17 20:54 alisson
+You can see that a file with the same user's name was created. So, every user
+will have a file in this folder since they created a crontab using the command
+crontab -e . For Linux systems, it is a requirement to have an SSH connection
+and the configuration file for this is: /etc/ssh/sshd_config :
+==================================================================================================================================================
+alisson@devops:~$ cat /etc/ssh/sshd_config
+# $OpenBSD: sshd_config,v 1.101 2017/03/14 07:19:07 djm Exp $
+# This is the sshd server system-wide configuration file. See
+# sshd_config(5) for more information.
+# This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin
+# The strategy used for options in the default sshd_config shipped
+with
+# OpenSSH is to specify options with their default value where
+# possible, but leave them commented. Uncommented options override
+the
+# default value.
+#Port 22
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+==========================================================================================================================================
+Formerly, we have a short part of the file, in which you are able to change theport, and define which IP addresses will listen for the connections:
+alisson@devops:~$ grep Root /etc/ssh/sshd_config
+#PermitRootLogin prohibit-password
+# the setting of "PermitRootLogin without-password".
+One important configuration in the preceding file, PermitRootLogin , is in some cases, we are able to login in the server using the root user directly. 
+But, it is not a good practice. However, it is not uncommon to see in an on-premises environment. In the cloud environment, it is never allowed, 
+because everyone in the world can try to access with the root user.
+===================================================================================================================================================
+Another important configuration is the following one:
+===================================================================================================================================================
+alisson@devops:~$ grep PasswordAuthentication /etc/ssh/sshd_config
+#PasswordAuthentication yes
+# PasswordAuthentication. Depending on your PAM configuration,
+# PAM authentication, then enable this but set
+PasswordAuthentication
+PasswordAuthentication yes
+==================================================================================
+If you are working with any Cloud provider like Amazon, Azure, or GCP, this configuration is disabled by default, for security reasons.We have added our
+SSH key in the server in the first chapter. So, if you want, you can edit this file and change the option for no .
