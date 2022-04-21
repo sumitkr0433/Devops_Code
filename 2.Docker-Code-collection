@@ -82,3 +82,215 @@ root@devops:~# docker run -ti --name python_app -p 5000:5000 centos /bin/bash
 The creation now was clearly faster than the first one. This happens because the CentOS image is already in our local repository. Therefore, the Docker 
 does not need to download it again.
 =======================================================================================================================================================
+                                                                     Topic 8
+ Install the dependencies in the container with the following command:
+[root@ce7f74b0304a /]# yum clean all && yum install python3
+python3-pip -y
+Failed to set locale, defaulting to C.UTF-8
+0 files removed
+Failed to set locale, defaulting to C.UTF-8
+CentOS-8 - AppStream 11% [=======] 122 kB/s | 767 kB 00:49 ETA
+While the download is running, we have a new command now, the yum . This
+command is respective to APT on Ubuntu, and you can use it to install the
+packages from remote repositories.
+After the download finishes, install the Python modules for the application:
+[root@ce7f74b0304a /]# python3 -m pip install flask
+Successfully installed Jinja2-2.11.1 MarkupSafe-1.1.1 Werkzeug-
+1.0.1 click-7.1.1 flask-1.1.1 itsdangerous-1.1.0
+Copy the source code used in the previous chapter to the container:
+[root@ce7f74b0304a /]# cat <<EOF > /srv/app.py
+> from flask import Flask
+>
+> app = Flask(__name__)
+>
+> @app.route("/")
+> def index():
+> return "DevOps with Linux"
+>
+>
+> if __name__ == "__main__":> app.run(debug=True,host="0.0.0.0")
+> EOF
+================================================================================================================================
+Run the application to see if it is working:
+[root@ce7f74b0304a /]# python3 /srv/app.py
+* Serving Flask app "app" (lazy loading)
+* Environment: production
+WARNING: This is a development server. Do not use it in a
+production deployment.
+Use a production WSGI server instead.
+* Debug mode: on
+* Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+* Restarting with stat
+* Debugger is active!
+* Debugger PIN: 123-083-749
+Perfect! Now, you can test if from the web browser:
+HTTP/1.1" 404 -
+[root@ce7f74b0304a /]# exit
+root@devops:~#
+The important lines are the last ones, where i type Ctrl + C to stop the application, and Ctrl + D to exit the container:
+===============================================================================================================================
+We now have one container, called python_app . If you check the last column,this is the one we wanted to create an image:
+root@devops:~# docker commit python_app my_first_image
+sha256:866e933c059b90a098cad06a1989d24bf16870caea1d691e2c0d3f4599f1608c
+The parameter commit receives the first parameter as one container; it can be a running container or a stopped container, it does not matter; and the 
+second parameter is the image name. Therefore, we are creating a new image called my_first_image.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can check the images that you have running by the following command:
+docker image ls
+We can see two images; one is the CentOS image that we downloaded from the Docker Hub, which is the official repository.The other one is my_first_image
+that we created just now. You can create many instances of your application that
+you want just by running the following command:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+root@devops:~# docker run -ti -p 5000:5000 my_first_image python3
+/srv/app.py
+* Serving Flask app "app" (lazy loading)
+* Environment: productionWARNING: This is a development server. Do not use it in a
+production deployment.
+Use a production WSGI server instead.
+* Debug mode: on
+* Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+* Restarting with stat
+The parameter -p 5000:5000 , is mapping the port 5000 from our local machine to the port 5000 of our container.
+==========================================================================================================================================
+If you want to publish your image to download into any other server, you can
+create an account in the Docker Hub https://hub.docker.com/, and send your
+image there. In my case, I already have an account, so I will teach you how to
+send your own image to the hub:
+root@devops:~# docker login
+Login with your Docker ID to push and pull images from Docker Hub.
+If you don't have a Docker ID, head over to https://hub.docker.com
+to create one.
+Username: alissonmenezes
+Password:
+WARNING! Your password will be stored unencrypted in
+/root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-
+store
+Login Succeeded
+The username is what you defined while creating the account. You must use the
+Docker login, to authenticate into your repository. The username is also used to
+specify where you will store that image, for example:
+root@devops:~# docker tag my_first_image
+alissonmenezes/my_first_image
+root@devops:~# docker push alissonmenezes/my_first_image
+The push refers to repository
+[docker.io/alissonmenezes/my_first_image]
+ef02c4bc0109: Pushing [===========================>]
+22.67MB/41.69MB ef02c4bc0109: Pushed
+Now, my image is published for the whole world. If I check my own profile on Docker Hub, I can see the following:
+======================================================================================================================
+My image is saved and is prepared to run on any Docker installed around the world. So now, I will clean my environment, all the images and containers, 
+and create a new container based on that image downloaded directly from the hub:
+root@devops:~# docker system prune
+WARNING! This will remove:
+- all stopped containers
+- all networks not used by at least one container
+- all dangling images
+- all dangling build cache
+Are you sure you want to continue? [y/N] y
+Deleted Containers:
+06035663ec0423a479cddb0c287637626641c79c93896c6566efb802dc3ea35f
+4bbab42a400fc72a339977886cde2e061c9c1dce78305d5cb56336e6f36d5965
+adc48c7c0be4d422891b9e44146018c175120aab202a338f88f4a1847b50ba67
+ce7f74b0304a9bc08bf0ccdd2832d6907408c0f6a9c80c56a75d3bdbf6738b62
+595b42fceebc9e4f9c6e2d23d54a8ecd7eaead266ef114c953b1715d0f58a7ee
+Total reclaimed space: 41.69MB
+The command, docker system prune is used to clean your environment, deleting all the stopped containers. I will run that and let's validate if the
+environment is cleaned:
+No containers running. Now, let's delete all the images:
+========================================================================================
+root@devops:~# docker image rm $(docker image ls)
+Untagged: alissonmenezes/my_fist_image:latestUntagged:
+alissonmenezes/my_fist_image@sha256:3c729fd3e1a595ff2bcf0937611732550ebde0c0d19
+Untagged: my_first_image:latest
+Deleted:
+sha256:866e933c059b90a098cad06a1989d24bf16870caea1d691e2c0d3f4599f1608c
+Deleted:
+sha256:fbf13ca6b28b7113d750e70b57c59e2cfc90ae6b3c7436166161c92eef1dc219
+Untagged: centos:latest
+Checking if we still have images:
+docker image ls -a
+===========================================================================================================================================
+No images. Let's create a container based on the image that we pushed to the hub:
+======================================================================================================
+root@devops:~# docker run -ti -p 5000:5000
+alissonmenezes/my_fist_image:latest python3 /srv/app.py
+Unable to find image 'alissonmenezes/my_fist_image:latest' locally
+latest: Pulling from alissonmenezes/my_fist_image
+8a29a15cefae: Pull complete
+f21402989f68: Pull complete
+Digest:
+sha256:3c729fd3e1a595ff2bcf0937611732550ebde0c0d1945a87c01f979ca620b9fa
+Status: Downloaded newer image for
+alissonmenezes/my_fist_image:latest
+* Serving Flask app "app" (lazy loading)
+* Environment: production
+WARNING: This is a development server. Do not use it in a
+production deployment.
+Use a production WSGI server instead.
+* Debug mode: on
+* Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+* Restarting with stat
+* Debugger is active!
+* Debugger PIN: 249-372-527
+You can now see that the main objective of Docker is to create images for application purposes using an entire environment. We just created a version of
+CentOS with Python3 installed, and an application inside it. If you want to create a new version of your application, or update the CentoOS version, or
+even change the underlying OS, like migrating from CentOS to Alpine, you can do that. Do all the tests, create a new version of the image with the same 
+name, send it to the hub, and download it in to your production/quality/developmentenvironment.
+===========================================================================================================================================
+Creating Images with Dockerfile
+Now that you already know all the steps of how to create an image and how to push it into the hub, we can automate these steps using the Dockerfile. This 
+file helps you to track the modifications made into an image. When you just create a container, install everything and create an image. It is a difficult 
+task to track everything that was installed. Therefore, if you want to create a new version for the same application, you have to track all the 
+dependencies and everything, to ensure that all the earlier dependencies are still present in the new image.
+Now, create a file, called Dockerfile, and we will include all the steps running in the container within the file:
+================================================================================================================================================
+root@devops:~# vim Dockerfile
+from centos
+maintainer alisson.copyleft@gmail.com
+run yum clean all
+run yum install python3 python3-pip -y
+run python3 -m pip install flask
+copy app.py /srv/app.py
+expose 5000
+cmd ["python3","/srv/app.py"]
+==================================================================================================================================================
+Earlier, you have the file content, which has exactly all the commands that we ran within the container. The statements are self-explained, thus, you 
+can use: 
+from ,to specify the base image.
+maintainer , to specify who is maintaining the image.
+run , will execute the commands within the container.
+copy , copy one file from the local machine to the container.
+expose , publishes the container port.
+cmd , the command which will ensure the container running.
+=================================================================================================================================================
+To create the image based on Dockerfile, run the following command:
+root@devops:~# docker build . -t my_new_image
+Sending build context to Docker daemon 735.7kB
+Step 1/8 : from centos
+latest: Pulling from library/centos
+8a29a15cefae: Pulling fs layerThe Docker build will look for a Dockerfile inside the current directory. The
+parameter -t means TAG , which will define the image name. So, after the
+command finishes, you can just create a new container by running the following
+command:
+Successfully built b1b23966bb89
+Successfully tagged my_new_image:latest
+root@devops:~# docker run my_new_image
+* Serving Flask app "app" (lazy loading)
+* Environment: production
+WARNING: This is a development server. Do not use it in a
+production deployment.
+Use a production WSGI server instead.
+* Debug mode: on
+* Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+* Restarting with stat
+* Debugger is active!
+* Debugger PIN: 130-050-890
+It easy to see that now we did not have to pass any additional parameters,because all of them were already passed in the Dockerfile. The Dockerfile
+basically did the same steps for us before it created a new container. If you check the output, you will see the following:
+Successfully built b1b23966bb89
+This is the container ID, and in the end the container was tagged with the name specified in the Docker build:
+Successfully tagged my_new_image:latest
+You can directly put the repository name and push it there. Now, you already know the basics of Docker and it is the minimum requirement for you start 
+to Dockerize your applications
